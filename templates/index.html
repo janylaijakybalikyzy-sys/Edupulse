@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EduPulse - Пикир калтыруу</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f7f6; display: flex; justify-content: center; padding: 50px; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h2 { color: #2c3e50; text-align: center; }
+        select, textarea, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
+        button { background: #3498db; color: white; border: none; cursor: pointer; font-weight: bold; margin-top: 20px; }
+        .subject-badge { background: #e8f4fd; color: #3498db; padding: 5px 10px; border-radius: 5px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>EduPulse 📝</h2>
+        <p>Сабак: <span class="subject-badge">{{ subject.name }}</span></p>
+        <p>Мугалим: <strong>{{ subject.teacher_name }}</strong></p>
+        
+        <form action="/submit/{{ subject.id }}" method="post">
+            <label>Теманы түшүндүңүзбү? (1-5)</label>
+            <select name="rating" required>
+                <option value="5">5 - Абдан жакшы</option>
+                <option value="4">4 - Жакшы</option>
+                <option value="3">3 - Орточо</option>
+                <option value="2">2 - Кыйын болду</option>
+                <option value="1">1 - Түшүнбөдүм</option>
+            </select>
+
+            <label style="display: block; margin-top: 15px;">Эмне түшүнүксүз болду? (сунуш/пикир)</label>
+            <textarea name="difficulty" rows="4" placeholder="Мисалы: Формуланы кайра түшүндүрүп бериңизчи..."></textarea>
+            
+            <button type="submit">Жөнөтүү</button>
+        </form>
+    </div>
+</body>
+</html>
