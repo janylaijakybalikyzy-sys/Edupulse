@@ -64,14 +64,13 @@ async def create_feedback(
 async def teacher_home(request: Request):
     return templates.TemplateResponse("teacher.html", {"request": request})
 
-# 2. Жаңы сабак түзүү логикасы
 @app.post("/create_subject")
 async def create_subject(name: str = Form(...), teacher_name: str = Form(...), db: Session = Depends(get_db)):
-    # 1. Текшеребиз: Бул сабак мурун түзүлгөнбү?
+    # 1. Базадан ушундай аттагы сабак барбы деп текшеребиз
     existing_subject = db.query(models.Subject).filter(models.Subject.name == name).first()
     
     if existing_subject:
-        # 2. Эгер бар болсо, жаңы түзбөй эле ошол эскисинин бетине жөнөтөбүз
+        # 2. Эгер бар болсо, жаңы түзбөй эле, дароо ошол сабактын кодуна (Dashboard) жөнөтөбүз
         return RedirectResponse(url=f"/dashboard/{existing_subject.id}", status_code=303)
     
     # 3. Эгер жок болсо, жаңы сабак түзөбүз
