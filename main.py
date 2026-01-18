@@ -91,7 +91,7 @@ async def dashboard(request: Request, sub_id: int, db: Session = Depends(get_db)
             counts[f.rating - 1] += 1
             
     # Студенттерге бериле турган шилтеме (Мугалим ушуну көчүрүп берет)
-    student_link = f"http://127.0.0.1:8000/vote/{sub_id}"
+    student_link = f"https://edupulse-janylai.onrender.com/vote/{sub_id}"
 
     return templates.TemplateResponse("dashboard.html", {
         "request": request, 
