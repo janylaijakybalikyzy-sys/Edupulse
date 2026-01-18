@@ -66,13 +66,20 @@ async def teacher_home(request: Request):
 
 # 2. Жаңы сабак түзүү логикасы
 @app.post("/create_subject")
-async def create_subject(teacher_name: str = Form(...), subject_name: str = Form(...), db: Session = Depends(get_db)):
-    new_sub = models.Subject(name=subject_name, teacher_name=teacher_name)
-    db.add(new_sub)
+async def create_subject(name: str = Form(...), teacher_name: str = Form(...), db: Session = Depends(get_db)):
+    # 1. Текшеребиз: Бул сабак мурун түзүлгөнбү?
+    existing_subject = db.query(models.Subject).filter(models.Subject.name == name).first()
+    
+    if existing_subject:
+        # 2. Эгер бар болсо, жаңы түзбөй эле ошол эскисинин бетине жөнөтөбүз
+        return RedirectResponse(url=f"/dashboard/{existing_subject.id}", status_code=303)
+    
+    # 3. Эгер жок болсо, жаңы сабак түзөбүз
+    new_subject = models.Subject(name=name, teacher_name=teacher_name)
+    db.add(new_subject)
     db.commit()
-    db.refresh(new_sub)
-    # Сабак түзүлгөндөн кийин мугалимди дешбордго жөнөтөт
-    return RedirectResponse(url=f"/dashboard/{new_sub.id}", status_code=303)
+    db.refresh(new_subject)
+    return RedirectResponse(url=f"/dashboard/{new_subject.id}", status_code=303)
 
 # 3. Мугалимдин аналитикалык панели (Ар бир сабак үчүн өзүнчө)
 @app.get("/dashboard/{sub_id}", response_class=HTMLResponse)
