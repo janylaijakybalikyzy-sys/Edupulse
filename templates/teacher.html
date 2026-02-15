@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>EduPulse - Мугалимдер үчүн</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f7f6; display: flex; justify-content: center; padding: 50px; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 400px; }
+        input, button { width: 100%; padding: 12px; margin-top: 15px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; font-size: 16px; }
+        button { background: #27ae60; color: white; border: none; cursor: pointer; font-weight: bold; margin-top: 25px; transition: 0.3s; }
+        button:hover { background: #219150; }
+        h2 { text-align: center; color: #333; }
+        label { font-size: 14px; color: #666; margin-bottom: -10px; display: block; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Жаңы сабак кошуу ➕</h2>
+        <form action="/create_subject" method="post">
+            <input type="text" name="teacher_name" placeholder="Мугалимдин аты-жөнү" required>
+            <input type="text" name="name" placeholder="Сабактын аталышы (мис: Физика)" required>
+            <input type="text" name="topic_name" placeholder="Сабактын темасы" required>
+            
+            <label>Сабак өтүлгөн күн:</label>
+            <input type="date" name="lesson_date" required>
+            
+            <button type="submit">Сабакты түзүү жана QR-код алуу</button>
+        </form>
+    </div>
+</body>
+</html>
