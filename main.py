@@ -19,7 +19,7 @@ def get_db():
     finally:
         db.close()
 
-# 0. БАШКЫ БЕТ (Автоматтык түрдө мугалимдин бетине багыттайт)
+# 0. БАШКЫ БЕТ
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
     return RedirectResponse(url="/teacher")
@@ -39,7 +39,7 @@ async def vote_page(request: Request, sub_id: int, db: Session = Depends(get_db)
 async def create_feedback(
     sub_id: int,
     rating: int = Form(...), 
-    difficulty: str = Form(None), # Бул жер HTMLдеги name="difficulty" менен дал келиши керек
+    difficulty: str = Form(None), 
     db: Session = Depends(get_db)
 ):
     new_feedback = models.Feedback(
@@ -49,7 +49,7 @@ async def create_feedback(
     )
     db.add(new_feedback)
     db.commit()
-    # Ийгиликтүү болгондогу билдирүү
+    
     return HTMLResponse("""
         <div style="text-align:center; padding:50px; font-family:sans-serif; background-color: #f8f9fa; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <h2 style="color: #27ae60;">Рахмат! Пикириңиз кабыл алынды. ✅</h2>
@@ -85,7 +85,6 @@ async def create_subject(
     db.add(new_subject)
     db.commit()
     db.refresh(new_subject)
-    # Түзүлгөн соң статус код 303 менен багыттоо (Redirect)
     return RedirectResponse(url=f"/dashboard/{new_subject.id}", status_code=303)
 
 # 3. Мугалимдин аналитикалык панели (Dashboard)
@@ -105,8 +104,9 @@ async def dashboard(request: Request, sub_id: int, db: Session = Depends(get_db)
         if 1 <= f.rating <= 5:
             counts[f.rating - 1] += 1
             
-    # Сиздин Render шилтемеңиз
-    student_link = f"https://edupulse-janylai.onrender.com/vote/{sub_id}"
+    # ШИЛТЕМЕНИ АВТОМАТТЫК ТҮРДӨ ТҮЗҮҮ (Эң коопсуз жолу)
+    actual_base_url = str(request.base_url).rstrip("/")
+    student_link = f"{actual_base_url}/vote/{sub_id}"
 
     return templates.TemplateResponse("dashboard.html", {
         "request": request, 
