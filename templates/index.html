@@ -42,11 +42,13 @@
     <div class="card">
         <h2>EduPulse 📝</h2>
         <div class="info-box">
-            <p><strong>Сабак:</strong> {{ subject.name }}</p>
-            <p><strong>Тема:</strong> {{ subject.topic_name }}</p> <p><strong>Мугалим:</strong> {{ subject.teacher_name }}</p>
-            <p><strong>Күнү:</strong> {{ subject.lesson_date }}</p> </div>
+            <p><strong>Сабак:</strong> {{ subject.name | default('Жүктөлүүдө...') }}</p>
+            <p><strong>Тема:</strong> {{ subject.topic_name | default('-') }}</p> 
+            <p><strong>Мугалим:</strong> {{ subject.teacher_name | default('-') }}</p>
+            <p><strong>Күнү:</strong> {{ subject.lesson_date | default('-') }}</p> 
+        </div>
 
-        <form action="/submit/{{ subject.id }}" method="post">
+        <form action="/submit/{{ subject.id if subject else 0 }}" method="post">
             <label>Теманы түшүндүңүзбү? (1-5)</label>
             <select name="rating" required>
                 <option value="5">5 - Абдан жакшы түшүндүм</option>
