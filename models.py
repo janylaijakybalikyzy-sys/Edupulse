@@ -7,7 +7,7 @@ class Subject(Base):
     __tablename__ = "subjects"
     
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
+    name = Column(String)  # Бул жерден unique=True алып салынды, ар бир сабак жаңы ID алат
     teacher_name = Column(String)
     topic_name = Column(String)
     lesson_date = Column(String)
@@ -22,8 +22,7 @@ class Feedback(Base):
     subject_id = Column(Integer, ForeignKey("subjects.id"))
     rating = Column(Integer)
     difficulty = Column(String)
-    # Төмөнкү сапты эң жөнөкөй форматка өзгөрттүк:
-    created_at = Column(DateTime, default=datetime.now)
+    created_at = Column(DateTime, default=datetime.utcnow)
     
     # Пикир менен сабактын байланышы
     subject = relationship("Subject", back_populates="feedbacks")

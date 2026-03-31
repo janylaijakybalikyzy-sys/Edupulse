@@ -19,28 +19,27 @@ def get_db():
     finally:
         db.close()
 
-# 0. БАШКЫ БЕТ
+# 0. БАШКЫ БЕТ (Автоматтык түрдө мугалимдин бетине багыттайт)
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
     return RedirectResponse(url="/teacher")
 
 # --- СТУДЕНТТЕР ҮЧҮН ---
 
-# 1. Студент добуш бере турган бет
+# 1. Студент добуш бере турган баракчаны ачуу (GET)
 @app.get("/vote/{sub_id}", response_class=HTMLResponse)
 async def vote_page(request: Request, sub_id: int, db: Session = Depends(get_db)):
     subject = db.query(models.Subject).filter(models.Subject.id == sub_id).first()
-    # Эгер базада мындай ID жок болсо, ката бербей, башкы бетке жөнөтөт
     if not subject:
         return RedirectResponse(url="/teacher")
     return templates.TemplateResponse("index.html", {"request": request, "subject": subject})
 
-# 2. Студенттин пикирин базага сактоо
-@app.post("/submit/{sub_id}")
+# 2. Студенттин пикирин кабыл алуу жана базага сактоо (POST)
+@app.post("/vote/{sub_id}")
 async def create_feedback(
     sub_id: int,
     rating: int = Form(...), 
-    difficulty: str = Form(None), 
+    difficulty: str = Form(None), # Бул жер HTMLдеги name="difficulty" менен дал келиши керек
     db: Session = Depends(get_db)
 ):
     new_feedback = models.Feedback(
@@ -50,12 +49,13 @@ async def create_feedback(
     )
     db.add(new_feedback)
     db.commit()
+    # Ийгиликтүү болгондогу билдирүү
     return HTMLResponse("""
-        <div style="text-align:center; padding:50px; font-family:sans-serif; background-color: #f8f9fa; height: 100vh;">
+        <div style="text-align:center; padding:50px; font-family:sans-serif; background-color: #f8f9fa; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <h2 style="color: #27ae60;">Рахмат! Пикириңиз кабыл алынды. ✅</h2>
-            <p style="font-size: 18px; color: #555;">Сиз терезени жапсаңыз болот.</p>
+            <p style="font-size: 18px; color: #555;">Сиздин бааңыз ийгиликтүү сакталды.</p>
             <br>
-            <a href="/teacher" style="text-decoration: none; color: #3498db;">Башкы бетке өтүү</a>
+            <a href="/teacher" style="text-decoration: none; color: #3498db; font-weight: bold; border: 1px solid #3498db; padding: 10px 20px; border-radius: 5px;">Башкы бетке өтүү</a>
         </div>
     """)
 
@@ -76,7 +76,6 @@ async def create_subject(
     lesson_date: str = Form(...), 
     db: Session = Depends(get_db)
 ):
-    # Ар бир жаңы сабак уникалдуу ID алат
     new_subject = models.Subject(
         name=name, 
         teacher_name=teacher_name,
@@ -86,15 +85,14 @@ async def create_subject(
     db.add(new_subject)
     db.commit()
     db.refresh(new_subject)
-    # Түзүлгөн соң дароо мугалимдин аналитикалык панелине (dashboard) жөнөтөт
+    # Түзүлгөн соң статус код 303 менен багыттоо (Redirect)
     return RedirectResponse(url=f"/dashboard/{new_subject.id}", status_code=303)
 
-# 3. Мугалимдин аналитикалык панели
+# 3. Мугалимдин аналитикалык панели (Dashboard)
 @app.get("/dashboard/{sub_id}", response_class=HTMLResponse)
 async def dashboard(request: Request, sub_id: int, db: Session = Depends(get_db)):
     subject = db.query(models.Subject).filter(models.Subject.id == sub_id).first()
     
-    # Эгер бул сабак базадан табылбаса (мисалы, сервер өчүп күйсө), кайра каттоо бетине жөнөтөт
     if not subject:
         return RedirectResponse(url="/teacher")
         
@@ -107,7 +105,7 @@ async def dashboard(request: Request, sub_id: int, db: Session = Depends(get_db)
         if 1 <= f.rating <= 5:
             counts[f.rating - 1] += 1
             
-    # Студенттерге бериле турган шилтеме (Render шилтемеси менен)
+    # Сиздин Render шилтемеңиз
     student_link = f"https://edupulse-janylai.onrender.com/vote/{sub_id}"
 
     return templates.TemplateResponse("dashboard.html", {

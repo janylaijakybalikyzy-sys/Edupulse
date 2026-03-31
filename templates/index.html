@@ -28,6 +28,7 @@
         select, textarea {
             width: 100%; padding: 12px; margin-top: 8px; border-radius: 10px;
             border: 2px solid #e2e8f0; box-sizing: border-box; outline: none; transition: 0.3s;
+            font-family: inherit;
         }
         select:focus, textarea:focus { border-color: #764ba2; }
         button {
@@ -41,16 +42,19 @@
 <body>
     <div class="card">
         <h2>EduPulse 📝</h2>
+        
         <div class="info-box">
-            <p><strong>Сабак:</strong> {{ subject.name | default('Жүктөлүүдө...') }}</p>
-            <p><strong>Тема:</strong> {{ subject.topic_name | default('-') }}</p> 
-            <p><strong>Мугалим:</strong> {{ subject.teacher_name | default('-') }}</p>
-            <p><strong>Күнү:</strong> {{ subject.lesson_date | default('-') }}</p> 
+            <p><strong>Сабак:</strong> {{ subject.name }}</p>
+            <p><strong>Тема:</strong> {{ subject.topic_name }}</p> 
+            <p><strong>Мугалим:</strong> {{ subject.teacher_name }}</p>
+            <p><strong>Күнү:</strong> {{ subject.lesson_date }}</p> 
         </div>
 
-        <form action="/submit/{{ subject.id if subject else 0 }}" method="post">
+        <form action="/vote/{{ subject.id }}" method="post">
+            
             <label>Теманы түшүндүңүзбү? (1-5)</label>
             <select name="rating" required>
+                <option value="" disabled selected>Баа тандаңыз...</option>
                 <option value="5">5 - Абдан жакшы түшүндүм</option>
                 <option value="4">4 - Жакшы, суроолор жок</option>
                 <option value="3">3 - Орточо, кээ бир жерлери түшүнүксүз</option>
