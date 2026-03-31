@@ -1,184 +1,34 @@
 <!DOCTYPE html>
-<html lang="ky">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduPulse - Пикир калтыруу</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
-
     <style>
-        :root {
-            --bg-gradient: linear-gradient(135deg, #f4f7f6 0%, #e2e8f0 100%);
-            --card-bg: rgba(255, 255, 255, 0.9);
-            --text-color: #2c3e50;
-            --input-bg: #ffffff;
-            --border-color: #ddd;
-        }
-
-        /* Караңгы режимдин өзгөрмөлөрү */
-        .dark-mode {
-            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --text-color: #f1f5f9;
-            --input-bg: rgba(255, 255, 255, 0.05);
-            --border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        body { 
-            font-family: 'Comfortaa', sans-serif; 
-            background: var(--bg-gradient); 
-            min-height: 100vh;
-            display: flex; 
-            flex-direction: column;
-            align-items: center; 
-            justify-content: center; 
-            margin: 0;
-            transition: all 0.4s ease;
-        }
-
-        /* Режимди которуу баскычы */
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 12px;
-            border-radius: 50%;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            z-index: 1000;
-        }
-
-        .card { 
-            background: var(--card-bg); 
-            padding: 40px; 
-            border-radius: 30px; 
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--border-color);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2); 
-            width: 90%; 
-            max-width: 450px; 
-            color: var(--text-color);
-            transition: transform 0.3s ease;
-        }
-
-        h2 { text-align: center; font-weight: 700; margin-bottom: 25px; }
-        
-        .info-box {
-            background: var(--input-bg);
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border-color);
-        }
-
-        .subject-badge { 
-            background: #3498db; 
-            color: white; 
-            padding: 4px 12px; 
-            border-radius: 8px; 
-            font-size: 0.9em;
-        }
-
-        label { display: block; margin: 15px 0 8px 5px; font-size: 0.9em; opacity: 0.8; }
-
-        select, textarea { 
-            width: 100%; 
-            padding: 14px; 
-            background: var(--input-bg);
-            color: var(--text-color);
-            border-radius: 12px; 
-            border: 1px solid var(--border-color); 
-            box-sizing: border-box; 
-            outline: none;
-            font-family: inherit;
-        }
-
-        select:focus, textarea:focus { border-color: #3498db; }
-
-        button { 
-            background: linear-gradient(90deg, #3498db, #2980b9); 
-            color: white; 
-            border: none; 
-            padding: 16px;
-            border-radius: 15px;
-            cursor: pointer; 
-            font-weight: bold; 
-            width: 100%;
-            margin-top: 25px;
-            font-size: 16px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        button:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4); 
-        }
+        body { font-family: sans-serif; background: #f4f7f6; display: flex; justify-content: center; padding: 50px; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h2 { color: #2c3e50; text-align: center; }
+        select, textarea, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
+        button { background: #3498db; color: white; border: none; cursor: pointer; font-weight: bold; margin-top: 20px; }
+        .subject-badge { background: #e8f4fd; color: #3498db; padding: 5px 10px; border-radius: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
-
-    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
-        <i class="fas fa-moon"></i>
-    </button>
-
     <div class="card">
         <h2>EduPulse 📝</h2>
-        
-        <div class="info-box">
-            <p style="margin: 0 0 10px 0;">Сабак: <span class="subject-badge">{{ subject.name }}</span></p>
-            <p style="margin: 0;">Мугалим: <strong>{{ subject.teacher_name }}</strong></p>
-        </div>
-
+        <p>Сабак: <span class="subject-badge">{{ subject.name }}</span></p>
+        <p>Мугалим: <strong>{{ subject.teacher_name }}</strong></p>
         <form action="/submit/{{ subject.id }}" method="post">
             <label>Теманы түшүндүңүзбү? (1-5)</label>
             <select name="rating" required>
-                <option value="5">5 - Абдан жакшы түшүндүм</option>
-                <option value="4">4 - Жакшы</option>
-                <option value="3">3 - Орточо</option>
-                <option value="2">2 - Кыйын болду</option>
-                <option value="1">1 - Түшүнбөдүм</option>
+                <option value="5">5 - абдан жакшы</option>
+                <option value="4">4 - жакшы</option>
+                <option value="3">3 - орточо</option>
+                <option value="2">2 - кыйын болду</option>
+                <option value="1">1 - түшүнбөдүм</option>
             </select>
-
-            <label>Эмне түшүнүксүз болду? (сунуш/пикир)</label>
+            <label style="display: block; margin-top: 15px;">Эмне түшүнүксүз болду? (сунуш/пикир)</label>
             <textarea name="difficulty" rows="4" placeholder="Мисалы: формуланы кайра түшүндүрүп бериңизчи..."></textarea>
-            
             <button type="submit">Жөнөтүү</button>
         </form>
     </div>
-
-    <script>
-        // Теманы алмаштыруу функциясы
-        function toggleTheme() {
-            const body = document.body;
-            const btn = document.getElementById('themeBtn');
-            const icon = btn.querySelector('i');
-
-            body.classList.toggle('dark-mode');
-            
-            if (body.classList.contains('dark-mode')) {
-                localStorage.setItem('theme', 'dark');
-                icon.classList.replace('fa-moon', 'fa-sun');
-            } else {
-                localStorage.setItem('theme', 'light');
-                icon.classList.replace('fa-sun', 'fa-moon');
-            }
-        }
-
-        // Сайт ачылганда теманы текшерүү
-        window.onload = () => {
-            const savedTheme = localStorage.getItem('theme');
-            const icon = document.querySelector('#themeBtn i');
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-                icon.classList.replace('fa-moon', 'fa-sun');
-            }
-        };
-    </script>
 </body>
 </html>
